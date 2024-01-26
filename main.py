@@ -29,7 +29,7 @@ def nome_check():
         "Alcool": []
     }
     churras = pd.DataFrame(churras)
-    churras["Nome"] = cvd.get().strip().replace(" e ", ",").split(",")
+    churras["Nome"] = cvd.get().replace(" e ", ",").title().split(",")
     dicvar = {}
     for n in range(len(churras["Nome"])):
         dicvar["varc%s" % str(n)] = BooleanVar(janela)
@@ -56,6 +56,8 @@ def scroll1():
 
 
 def calc_final():
+    if churras["Nome"] == []:
+        return
     lista = button_group3.grid_slaves()
     for item in lista:
         item.destroy()
@@ -90,8 +92,18 @@ def scroll2():
 
 
 def export_buttom():
+    if churras["Nome"] == []:
+        janela2 = Toplevel(bg="white")
+        janela2.title("Exportar arquivo")
+        janela2.geometry("350x115+380+160")
+        janela2.focus()
+        label_nome = Label(janela2, text="Não há nada a ser exportado.\n Primeiro, calcule os valores.",
+                           font="Ivy 14 italic", bg="white")
+        label_nome.place(relx=0.15, rely=0.25)
+        return
     janela2 = Toplevel()
     janela2.title("Exportar arquivo")
+    janela2.focus()
     label_nome = Label(janela2, text="Qual nome do arquivo?")
     label_nome.grid(row=0, column=0)
     entry_var = StringVar()
@@ -112,36 +124,37 @@ def save_and_close(nome, window):
 
 
 def config_screen():
-    janela3 = Toplevel()
+    janela3 = Toplevel(width=200, height=100, bg="white")
     janela3.title("Mudar Parâmetros")
-    chng1 = Label(janela3, text="Valor com Carne:")
-    chng1.place(relx=0.15, rely=0.1)
+    janela3.focus()
+    chng1 = Label(janela3, text="Valor com Carne:", bg="white")
+    chng1.place(relx=0.15, y=10)
     v = IntVar()
     v.set(valores["carne"][0])
     modent1 = Spinbox(janela3, width=4, from_=0, to=200, textvariable=v,
                       command=lambda: editor_valores(v.get(), v2.get(), v3.get(), v4.get()))
-    modent1.place(relx=0.65, rely=0.1)
-    chng2 = Label(janela3, text="Valor sem Carne:")
-    chng2.place(relx=0.15, rely=0.2)
+    modent1.place(relx=0.65, y=10)
+    chng2 = Label(janela3, text="Valor sem Carne:", bg="white")
+    chng2.place(relx=0.15, y=30)
     v2 = IntVar()
     v2.set(valores["veg"][0])
     modent2 = Spinbox(janela3, width=4, from_=0, to=200, textvariable=v2,
                       command=lambda: editor_valores(v.get(), v2.get(), v3.get(), v4.get()))
-    modent2.place(relx=0.65, rely=0.2)
-    chng3 = Label(janela3, text="Valor com Alcool:")
-    chng3.place(relx=0.15, rely=0.3)
+    modent2.place(relx=0.65, y=30)
+    chng3 = Label(janela3, text="Valor com Alcool:", bg="white")
+    chng3.place(relx=0.15, y=50)
     v3 = IntVar()
     v3.set(valores["alc"][0])
     modent3 = Spinbox(janela3, width=4, from_=0, to=200, textvariable=v3,
                       command=lambda: editor_valores(v.get(), v2.get(), v3.get(), v4.get()))
-    modent3.place(relx=0.65, rely=0.3)
-    chng4 = Label(janela3, text="Valor sem Alcool:")
-    chng4.place(relx=0.15, rely=0.4)
+    modent3.place(relx=0.65, y=50)
+    chng4 = Label(janela3, text="Valor sem Alcool:", bg="white")
+    chng4.place(relx=0.15, y=70)
     v4 = IntVar()
     v4.set(valores["refri"][0])
     modent4 = Spinbox(janela3, width=4, from_=0, to=200, textvariable=v4,
                       command=lambda: editor_valores(v.get(), v2.get(), v3.get(), v4.get()))
-    modent4.place(relx=0.65, rely=0.4)
+    modent4.place(relx=0.65, y=70)
 
 
 def editor_valores(v, v2, v3, v4):
@@ -149,7 +162,8 @@ def editor_valores(v, v2, v3, v4):
     valores["veg"][0] = v2
     valores["alc"][0] = v3
     valores["refri"][0] = v4
-    print(valores)
+    if not churras["Nome"] == []:
+        calc_final()
 
 
 # Criando a janela
